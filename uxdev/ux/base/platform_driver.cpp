@@ -27,11 +27,9 @@ platform_driver_t::platform_driver_t(std::string &platform_driver, int argc,
 
 platform_driver_t::~platform_driver_t() { dlclose(handle); }
 
-int platform_driver_t::append_c_str(const char *sz) {
+int platform_driver_t::draw_text(const char *sz) {
   return driver_instance->append(sz);
 }
-
-int platform_driver_t::flush() { return driver_instance->flush(); }
 
 int platform_driver_t::clear() { return driver_instance->clear(); }
 

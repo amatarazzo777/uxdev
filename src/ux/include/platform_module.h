@@ -2,19 +2,18 @@
 #define BASE_PLATFORM_H
 
 namespace uxdev {
-class platform_driver_t : window_interface_t {
+class platform_module_t : module_abstract_t {
 public:
-  platform_driver_t() = delete;
-  platform_driver_t(std::string &platform_driver, int _argc, char **_argv);
-  ~platform_driver_t();
+  platform_module_t() = delete;
+  platform_module_t(const char *platform_driver, int _argc, char **_argv);
+  ~platform_module_t();
 
   window_interface_t &new_surface(std::string title) {
     surface_objects.emplace_back(create());
     return surface_objects.emplace_back(create());
   }
-  int platform_driver_t::append_c_str(const char *sz)
-  
-  int flush();
+
+  int draw_text(char *sz);
   int clear();
   int locate(const u_int16_t &_row, const u_int16_t &_col);
   int clip(const u_int16_t &_w, const u_int16_t &_h);

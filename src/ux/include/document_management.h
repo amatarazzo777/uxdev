@@ -20,59 +20,17 @@ public:
 
   children_storage_t children = {};
 
-  document_management_t() {}
+  document_management_t();
 
-  /**
-   * @fn operator[]
-   * @brief returns the child associated with the string
-   */
-  child_storage_t &operator[](const std::string &_idx) {
-    auto it = children.find(_idx);
-    if (it == children.end()) {
-      std::stringstream ss;
-      ss << "Error in operator[], object_id  (" << _idx << ") not found.";
-      throw std::runtime_error(ss.str());
-    }
+  child_storage_t &operator[](const std::string &_idx);
 
-    return it->second;
-  }
+  int optimize_parser();
 
-  /**
-   * @fn optimize_parser
-   * @brief
-   */
-  int optimize_parser() { return EXIT_SUCCESS; }
+  int add(const std::stringstream &ss);
 
-  /**
-   * @overload*
-   * @fn add
-   * @param const std::stringstream &ss
-   * @brief
-   */
-  int add(const std::stringstream &ss) { return add(ss.str()); }
+  int add(const std::filesystem::path &fp);
 
-  /**
-   * @overload
-   * @fn add
-   * @param const std::filesystem::path &fp
-   * @brief
-   */
-  int add(const std::filesystem::path &fp) {
-    std::stringstream data = {};
-    std::ifstream finput(fp);
-    data << finput.rdbuf();
-    finput.close();
-    return add(data);
-  }
-
-  /**
-   * @overload
-   * @fn add
-   * @param const std::string &s
-   * @brief
-   */
-  int add(const std::string &s) { return add(s.data()); }
-
+  int add(const std::string &s);
   /**
    * @overload
    * @fn add
@@ -160,7 +118,7 @@ public:
    *
    */
 
-  int add(const char *sz) { return EXIT_SUCCESS; }
+  int add(const char *sz);
 };
 
 } // namespace uxdev

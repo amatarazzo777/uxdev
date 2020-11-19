@@ -3,29 +3,6 @@
 
 namespace uxdev {
 
-class event_t {
-public:
-  u_int8_t type = {};
-  char *detail = {};
-  char *key = {};
-  unsigned int x = {}, y = {}, h = {}, w = {};
-
-  std::size_t hash_code() {
-    std::size_t value = {};
-    hash_combine(value, event_name);
-    return value;
-  }
-
-  const u_int8_t key_press = 1;
-  const u_int8_t key_release = 2;
-  const u_int8_t motion_notify = 3;
-  const u_int8_t button_press = 4;
-  const u_int8_t button_release = 5;
-  const u_int8_t scroll = 6;
-  const u_int8_t configure = 7;
-
-}
-
 /**
  * @typedef fn_listen_t
  * @brief The listener type. Every function added through the event() must be
@@ -34,16 +11,15 @@ public:
  * events. Within the event handler, you should utilize the appropriate
  * parameters.
  */
-  typedef std::function<bool(const event_t &)> fn_listen_t;
-  
+typedef std::function<bool(const event_t &)> fn_listen_t;
+
 class event_dispatcher_t {
 public:
-
   // @brief listener map
   typedef std::unordered_map<std::size_t, std::list<fn_listen_t>>
       event_listener_umap_t;
 
-  event_dispatcher_t() {}
+  event_dispatcher_t();
 
   /**
    * @fn event
@@ -70,44 +46,12 @@ public:
    * All other control object derive from this.
    *
    */
-  void listen(const std::string &evt, const fn_listen_t &_fn = {}) {
-    std::size_t value = {};
-    hash_combine(value, evt);
+  void listen(const int &event_type, const fn_listen_t &_fn = {});
 
-    if (!_fn)
-      event_listener_umap.erase(value);
-    else
-      event_listener_umap[value].push_back(_fn);
-  }
+  void listen(const int &event_type, const int &detail,
+              const fn_listen_t &_fn = {});
 
-  void listen(const std::string &evt, const std::string &detail,
-              const fn_listen_t &_fn = {}) {
-    std::size_t value = {};
-    hash_combine(value, evt, detail);
-
-    if (!_fn)
-      event_listener_umap.erase(value);
-    else
-      event_listener_umap[value].push_back(_fn);
-  }
-
-  /**
-   * @fn dispatch
-   * @param int evt - the KEY_[NAME...] of the integer event defined within
-   * curses.h
-   * @brief class the mapped function if one is assigned.
-   */
-  int dispatch(const event_t &evt) {
-    auto it = event_listener_umap.find(dispatcher_hash_key(evt.hash_code()));
-    if (it != event_listener_umap.end()) {
-      for (auto fn : it->second) {
-        // not bubbling stops dispatch.
-        if (!fn(evt))
-          break;
-      }
-    }
-    return EXIT_SUCCESS;
-  }
+  int dispatch(const event_t &evt);
 
   event_listener_umap_t event_listener_umap = {};
 };
